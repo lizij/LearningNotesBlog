@@ -1,5 +1,11 @@
 title: Lizij's Blog
 
+description: My personal learning notes
+
+show_downloads: false
+
 theme: jekyll-theme-cayman
+
+port: 8080
 
 markdown: kramdown

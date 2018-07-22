@@ -1,7 +1,13 @@
+---
+layout: default
+---
+
 # Sorting Alogrithms
 
 [TOC]
 
+* 
+{:toc}
 
 ## Time complexity
 

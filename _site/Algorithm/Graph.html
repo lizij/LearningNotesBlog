@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Lizij’s Blog | My personal learning notes</title>
+<meta name="generator" content="Jekyll v3.8.3" />
+<meta property="og:title" content="Lizij’s Blog" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="My personal learning notes" />
+<meta property="og:description" content="My personal learning notes" />
+<link rel="canonical" href="http://localhost:8080/Algorithm/Graph.html" />
+<meta property="og:url" content="http://localhost:8080/Algorithm/Graph.html" />
+<meta property="og:site_name" content="Lizij’s Blog" />
+<script type="application/ld+json">
+{"description":"My personal learning notes","@type":"WebPage","url":"http://localhost:8080/Algorithm/Graph.html","headline":"Lizij’s Blog","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="/assets/css/style.css?v=">
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  </head>
+  <body>
+    <a id="skip-to-content" href="#content">Skip to the content.</a>
+
+    <header class="page-header" role="banner">
+      <h1 class="project-name">Lizij's Blog</h1>
+      <h2 class="project-tagline">My personal learning notes</h2>
+      
+      
+    </header>
+
+    <main id="content" class="main-content" role="main">
+      <h1 id="graph">Graph</h1>
+
+<p>[TOC]</p>
+
+<h2 id="basic-concepts">Basic Concepts</h2>
+
+<h3 id="point-or-node-vertex">Point (or Node, Vertex)</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Node</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">value</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">in</span><span class="o">;</span> <span class="c1">// incoming degree</span>
+    <span class="kt">int</span> <span class="n">out</span><span class="o">;</span> <span class="c1">// outgoing degree</span>
+    <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">nexts</span><span class="o">;</span><span class="c1">// Nodes point to</span>
+    <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;</span> <span class="n">edges</span><span class="o">;</span><span class="c1">// edges from this Node</span>
+
+    <span class="n">Node</span><span class="o">(</span><span class="kt">int</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">;</span>
+        <span class="n">in</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="n">nexts</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="edge">Edge</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Edge</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">weight</span><span class="o">;</span>
+    <span class="n">Node</span> <span class="n">from</span><span class="o">;</span>
+    <span class="n">Node</span> <span class="n">to</span><span class="o">;</span>
+
+    <span class="n">Edge</span><span class="o">(</span><span class="kt">int</span> <span class="n">weight</span><span class="o">,</span> <span class="n">Node</span> <span class="n">from</span><span class="o">,</span> <span class="n">Node</span> <span class="n">to</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">weight</span> <span class="o">=</span> <span class="n">weight</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">from</span> <span class="o">=</span> <span class="n">from</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">to</span> <span class="o">=</span> <span class="n">to</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="graph-1">Graph</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Graph</span> <span class="o">{</span>
+    <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">nodes</span><span class="o">;</span>
+    <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;</span> <span class="n">edges</span><span class="o">;</span>
+
+    <span class="n">Graph</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>If the input is a matrix, each line represents [fromNode, toNode, edgeWeight]. The graph can be generated by:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Graph</span> <span class="nf">createGraph</span><span class="o">(</span><span class="n">Integer</span><span class="o">[][]</span> <span class="n">matrix</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Graph</span> <span class="n">graph</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Graph</span><span class="o">();</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">matrix</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+        <span class="n">Integer</span> <span class="n">from</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="mi">0</span><span class="o">];</span>
+        <span class="n">Integer</span> <span class="n">to</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="mi">1</span><span class="o">];</span>
+        <span class="n">Integer</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="mi">2</span><span class="o">];</span>
+
+        <span class="c1">// generate nodes</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">graph</span><span class="o">.</span><span class="na">nodes</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">from</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">graph</span><span class="o">.</span><span class="na">nodes</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">from</span><span class="o">,</span> <span class="k">new</span> <span class="n">Node</span><span class="o">(</span><span class="n">from</span><span class="o">));</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">graph</span><span class="o">.</span><span class="na">nodes</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">to</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">graph</span><span class="o">.</span><span class="na">nodes</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">to</span><span class="o">,</span> <span class="k">new</span> <span class="n">Node</span><span class="o">(</span><span class="n">to</span><span class="o">));</span>
+        <span class="o">}</span>
+        <span class="n">Node</span> <span class="n">fromNode</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="na">nodes</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">from</span><span class="o">);</span>
+        <span class="n">Node</span> <span class="n">toNode</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="na">nodes</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">to</span><span class="o">);</span>
+
+        <span class="c1">// generate edges</span>
+        <span class="n">Edge</span> <span class="n">newEdge</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Edge</span><span class="o">(</span><span class="n">weight</span><span class="o">,</span> <span class="n">fromNode</span><span class="o">,</span> <span class="n">toNode</span><span class="o">);</span>
+        <span class="n">fromNode</span><span class="o">.</span><span class="na">nexts</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">toNode</span><span class="o">);</span>
+        <span class="n">fromNode</span><span class="o">.</span><span class="na">out</span><span class="o">++;</span>
+        <span class="n">toNode</span><span class="o">.</span><span class="na">in</span><span class="o">++;</span>
+        <span class="n">fromNode</span><span class="o">.</span><span class="na">edges</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">newEdge</span><span class="o">);</span>
+        <span class="n">graph</span><span class="o">.</span><span class="na">edges</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">newEdge</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">graph</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="storage-mode">Storage Mode</h2>
+
+<h3 id="adjacency-list">Adjacency List</h3>
+
+<p>An adjacency list is a collection of unordered lists used to represent a finite graph. Each list describes the set of neighbors of a <a href="https://en.wikipedia.org/wiki/Vertex_(graph_theory)">vertex</a> in the graph</p>
+
+<p>eg. <img src="http://img.blog.csdn.net/20130429141605716" alt="" /></p>
+
+<h3 id="adjacency-matrix">Adjacency Matrix</h3>
+
+<p>An adjacency matrix is a square matrix used to represent a finite graph. The elements of the matrix indicate whether pairs of vertices are adjacent or not in the graph</p>
+
+<p>eg.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/6n-graph2.svg/300px-6n-graph2.svg.png" alt="" /></td>
+      <td><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/a773011024de5e3cbe8da03e97c79e1fe3101937" alt="" /></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="comparation">Comparation</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Adjacency Matrix</th>
+      <th>Adjacency List</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Merits</td>
+      <td>Easy to judge if there is an edge between 2 nodes; Easy to add or remove edges</td>
+      <td>Space-saving, suitable for sparse graph</td>
+    </tr>
+    <tr>
+      <td>Demerits</td>
+      <td>Unsuitable for sparse  graph</td>
+      <td>Discommodious to compute incoming degree or outgoing degree of a vertex; Have to traverse twice to remove an edge</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="breadthfirstsearch">BreadthFirstSearch</h2>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">bfs</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">node</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="k">return</span><span class="o">;</span>
+    <span class="n">Queue</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;&gt;();</span><span class="c1">// nodes to be visited</span>
+    <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span><span class="c1">// visited nodes</span>
+    <span class="n">queue</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+    <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+    <span class="k">while</span> <span class="o">(!</span><span class="n">queue</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">Node</span> <span class="n">cur</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
+        <span class="c1">// print cur</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="n">Node</span> <span class="nl">next:</span> <span class="n">cur</span><span class="o">.</span><span class="na">nexts</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">set</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">next</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">next</span><span class="o">);</span>
+                <span class="n">queue</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">next</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="depthfirstsearch">DepthFirstSearch</h2>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">dfs</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">node</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="k">return</span><span class="o">;</span>
+    <span class="n">Stack</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">stack</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Stack</span><span class="o">&lt;&gt;();</span><span class="c1">// nodes to be visited</span>
+    <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span><span class="c1">// visited nodes</span>
+    <span class="n">stack</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+    <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+    <span class="k">while</span> <span class="o">(!</span><span class="n">stack</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">Node</span> <span class="n">cur</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="na">pop</span><span class="o">();</span>
+        <span class="c1">// print cur</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="n">Node</span> <span class="nl">next:</span> <span class="n">cur</span><span class="o">.</span><span class="na">nexts</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">set</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">next</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">stack</span><span class="o">.</span><span class="na">push</span><span class="o">(</span><span class="n">cur</span><span class="o">);</span><span class="c1">// use this cur to find other paths from cur in further</span>
+                <span class="n">stack</span><span class="o">.</span><span class="na">push</span><span class="o">(</span><span class="n">next</span><span class="o">);</span>
+                <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">next</span><span class="o">);</span>
+                <span class="c1">// once found a path from cur, break to make sure depth-first</span>
+                <span class="k">break</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="topologysort">TopologySort</h2>
+
+<p>A sorted node list, there are only edges from the latter ones to the front ones</p>
+
+<p>Only directed acyclic graph with at least one 0-in-degree node  have its TopologySort</p>
+
+<p>For example, the adjacency list of a directed graph is:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A: [B, C]
+B: [C]
+C: [D]
+D:
+</code></pre></div></div>
+
+<p>The TopologySort of this graph is [A, B, C, D]</p>
+
+<p>TopologySort can be used to solve dependency problems in applications’ installation</p>
+
+<p>eg. Installing B needs to installing A before. In other words, A supports B and C. C needs B and D needs C. Therefore the right procedure is to install A, B, C, D orderly</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">List</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="nf">sortedTopology</span><span class="o">(</span><span class="n">Graph</span> <span class="n">graph</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">inMap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+    <span class="n">Queue</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">zeroInQueue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;&gt;();</span>
+    <span class="k">for</span> <span class="o">(</span><span class="n">Node</span> <span class="nl">node:</span> <span class="n">graph</span><span class="o">.</span><span class="na">nodes</span><span class="o">.</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">inMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">node</span><span class="o">.</span><span class="na">in</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="na">in</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="n">zeroInQueue</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+    <span class="k">while</span> <span class="o">(!</span><span class="n">zeroInQueue</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// add 0-in nodes to result</span>
+        <span class="n">Node</span> <span class="n">cur</span> <span class="o">=</span> <span class="n">zeroInQueue</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
+        <span class="n">result</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">cur</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">Node</span> <span class="nl">next:</span> <span class="n">cur</span><span class="o">.</span><span class="na">nexts</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// decrease all adjacent nodes's in-degree in inMap by 1</span>
+            <span class="n">inMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">next</span><span class="o">,</span> <span class="n">inMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">next</span><span class="o">)</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">inMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">next</span><span class="o">)</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="n">zeroInQueue</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">next</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>More about <a href="https://zh.wikipedia.org/zh-cn/%E6%8B%93%E6%92%B2%E6%8E%92%E5%BA%8F">TopologySort</a></p>
+
+<h2 id="union-find">Union Find</h2>
+
+<p>Some nodes are given: [1, 2, 3, 4, …]</p>
+
+<p>each of them is in one set: [1, 3], [2], [4, 5], [6, 13, 26], [7, 22]</p>
+
+<p>For example, in a graph, the nodes can be seen as points, the sets can be seen as the connected components</p>
+
+<h3 id="auxiliary-values">Auxiliary values</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Node</span> <span class="o">{</span>
+  <span class="c1">// definition</span>
+<span class="o">}</span>
+<span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">,</span> <span class="n">Node</span><span class="o">&gt;</span> <span class="n">rootMap</span><span class="o">;</span><span class="c1">// (node, the root of node's set tree)</span>
+<span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">sizeMap</span><span class="o">;</span><span class="c1">// (node, the size of node's set tree)</span>
+</code></pre></div></div>
+
+<h3 id="initialize-sets">Initialize sets</h3>
+
+<p>every set is like a tree, with one of its node as the root ndoe</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">init</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">nodes</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">rootMap</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+    <span class="n">sizeMap</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+    <span class="k">for</span> <span class="o">(</span><span class="n">Node</span> <span class="nl">node:</span> <span class="n">nodes</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// every node as a set which only contains itself</span>
+        <span class="n">rootMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">node</span><span class="o">);</span>
+        <span class="n">sizeMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="find">find()</h3>
+
+<p>return a’s root node</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">boolean</span> <span class="nf">isSameRoot</span><span class="o">(</span><span class="n">Node</span> <span class="n">a</span><span class="o">,</span> <span class="n">Node</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="nf">find</span><span class="o">(</span><span class="n">a</span><span class="o">)</span> <span class="o">==</span> <span class="n">find</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="n">Node</span> <span class="nf">find</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// return the root of node's set tree</span>
+    <span class="n">Node</span> <span class="n">root</span> <span class="o">=</span> <span class="n">rootMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">root</span> <span class="o">!=</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// use recursion to find the origin root which node == node's root</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">find</span><span class="o">(</span><span class="n">root</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="n">rootMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">root</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">root</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="union">union()</h3>
+
+<p>union a’s set with b’s set</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">union</span><span class="o">(</span><span class="n">Node</span> <span class="n">a</span><span class="o">,</span> <span class="n">Node</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">a</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">b</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="k">return</span><span class="o">;</span>
+    <span class="n">Node</span> <span class="n">aRoot</span> <span class="o">=</span> <span class="n">find</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+    <span class="n">Node</span> <span class="n">bRoot</span> <span class="o">=</span> <span class="n">find</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">aRoot</span> <span class="o">==</span> <span class="n">bRoot</span><span class="o">)</span> <span class="k">return</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">aSetSize</span> <span class="o">=</span> <span class="n">sizeMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">aRoot</span><span class="o">);</span>
+    <span class="kt">int</span> <span class="n">bSetSize</span> <span class="o">=</span> <span class="n">sizeMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">bRoot</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">aSetSize</span> <span class="o">&lt;=</span> <span class="n">bSetSize</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">rootMap</span><span class="o">(</span><span class="n">aRoot</span><span class="o">,</span> <span class="n">bRoot</span><span class="o">);</span>
+        <span class="n">sizeMap</span><span class="o">(</span><span class="n">bRoot</span><span class="o">,</span> <span class="n">aSetSize</span> <span class="o">+</span> <span class="n">bSetSize</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="n">rootMap</span><span class="o">(</span><span class="n">bRoot</span><span class="o">,</span> <span class="n">aRoot</span><span class="o">);</span>
+        <span class="n">sizeMap</span><span class="o">(</span><span class="n">aRoot</span><span class="o">,</span> <span class="n">aSetSize</span> <span class="o">+</span> <span class="n">bSetSize</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>If the size of nodes is N, find() K times, union() F times, and (K + F) is <script type="math/tex">O(K+F)</script>, find() and union() can be done both in <script type="math/tex">O(1)</script> time averagely</p>
+
+  <p>In fact, the time complexity is <script type="math/tex">O(\alpha(N))</script>. <script type="math/tex">\alpha(N)</script> is the <em>Inverse-Ackermann</em> function which increases extremely slow. When N is close to <script type="math/tex">10^{80}</script>, <script type="math/tex">\alpha(N)</script> only return a number between 5 and 6. Therefore, the time complexiy is very close to <script type="math/tex">O(1)</script> when N is very large. Be careful it won’t be done in <script type="math/tex">O(1)</script> time if N is not large enough.</p>
+</blockquote>
+
+<h3 id="simple-implementation">Simple Implementation</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">SimpleUnionFind</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span> <span class="n">MAX_SIZE</span> <span class="o">=</span> <span class="mi">1001</span><span class="o">;</span>
+    <span class="kt">int</span><span class="o">[]</span> <span class="n">parent</span><span class="o">;</span>
+    <span class="kt">int</span><span class="o">[]</span> <span class="n">rank</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">SimpleUnionFind</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">MAX_SIZE</span><span class="o">];</span>
+        <span class="n">rank</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">MAX_SIZE</span><span class="o">];</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">parent</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">parent</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">i</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">find</span><span class="o">(</span><span class="kt">int</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">parent</span><span class="o">[</span><span class="n">a</span><span class="o">]</span> <span class="o">!=</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">parent</span><span class="o">[</span><span class="n">a</span><span class="o">]</span> <span class="o">=</span> <span class="n">find</span><span class="o">(</span><span class="n">parent</span><span class="o">[</span><span class="n">a</span><span class="o">]);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">parent</span><span class="o">[</span><span class="n">a</span><span class="o">];</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isSameParent</span><span class="o">(</span><span class="kt">int</span> <span class="n">a</span><span class="o">,</span> <span class="kt">int</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">find</span><span class="o">(</span><span class="n">a</span><span class="o">)</span> <span class="o">==</span> <span class="n">find</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">union</span><span class="o">(</span><span class="kt">int</span> <span class="n">a</span><span class="o">,</span> <span class="kt">int</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">ap</span> <span class="o">=</span> <span class="n">find</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+        <span class="kt">int</span> <span class="n">bp</span> <span class="o">=</span> <span class="n">find</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">ap</span> <span class="o">==</span> <span class="n">bp</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">rank</span><span class="o">[</span><span class="n">ap</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">rank</span><span class="o">[</span><span class="n">bp</span><span class="o">])</span> <span class="o">{</span>
+            <span class="n">parent</span><span class="o">[</span><span class="n">ap</span><span class="o">]</span> <span class="o">=</span> <span class="n">bp</span><span class="o">;</span>
+            <span class="n">rank</span><span class="o">[</span><span class="n">bp</span><span class="o">]</span> <span class="o">+=</span> <span class="n">rank</span><span class="o">[</span><span class="n">ap</span><span class="o">];</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">parent</span><span class="o">[</span><span class="n">bp</span><span class="o">]</span> <span class="o">=</span> <span class="n">ap</span><span class="o">;</span>
+            <span class="n">rank</span><span class="o">[</span><span class="n">ap</span><span class="o">]</span> <span class="o">+=</span> <span class="n">rank</span><span class="o">[</span><span class="n">bp</span><span class="o">];</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="minimum-spanning-tree">Minimum spanning tree</h2>
+
+<p>a subset of the edges of a connected, edge-weighted (un)directed graph that connects all the nodes together</p>
+
+<p>Kruskal and Prim are both to generate a minimum spanning tree of an undirected graph, which has no loop.</p>
+
+<h3 id="kruskal">Kruskal</h3>
+
+<p>It is a greedy algorithm in graph theory as it finds a minimum spanning tree for a connected weighted graph adding increasing cost edges at each step. <script type="math/tex">O(ElogE)</script></p>
+
+<p>Use UnionFind to detect if a loop will be generated by adding one edge in the process</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Kruskal%27s_algorithm#Example">Example</a></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;</span> <span class="nf">kruskalMST</span><span class="o">(</span><span class="n">Graph</span> <span class="n">graph</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">UnionFind</span> <span class="n">unionFind</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UnionFind</span><span class="o">();</span>
+    <span class="n">unionFind</span><span class="o">.</span><span class="na">init</span><span class="o">(</span><span class="n">graph</span><span class="o">.</span><span class="na">nodes</span><span class="o">.</span><span class="na">values</span><span class="o">());</span>
+    <span class="c1">// sort edges by weight</span>
+    <span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;</span> <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PriorityQueue</span><span class="o">&lt;&gt;((</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="o">.</span><span class="na">weight</span> <span class="o">-</span> <span class="n">b</span><span class="o">.</span><span class="na">weight</span><span class="o">);</span>
+    <span class="k">for</span> <span class="o">(</span><span class="n">Edge</span> <span class="nl">edge:</span> <span class="n">graph</span><span class="o">.</span><span class="na">edges</span><span class="o">)</span> <span class="n">queue</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="n">edge</span><span class="o">);</span>
+
+    <span class="n">Set</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+    <span class="k">while</span> <span class="o">(!</span><span class="n">queue</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">()</span> <span class="o">||</span> <span class="n">result</span><span class="o">.</span><span class="na">size</span> <span class="o">&lt;</span> <span class="n">graph</span><span class="o">.</span><span class="na">nodes</span><span class="o">.</span><span class="na">size</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// find the shortest edge in the queue</span>
+        <span class="n">Edge</span> <span class="n">edge</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">unionFind</span><span class="o">.</span><span class="na">isSameRoot</span><span class="o">(</span><span class="n">edge</span><span class="o">.</span><span class="na">from</span><span class="o">,</span> <span class="n">edge</span><span class="o">.</span><span class="na">to</span><span class="o">))</span> <span class="o">{</span>
+            <span class="c1">// if there is no path from edge.from to edge.to, a loop won't be generated by adding this edge </span>
+            <span class="n">result</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">edge</span><span class="o">);</span>
+            <span class="n">unionFind</span><span class="o">.</span><span class="na">union</span><span class="o">(</span><span class="n">edge</span><span class="o">.</span><span class="na">from</span><span class="o">,</span> <span class="n">edge</span><span class="o">.</span><span class="na">to</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="prim">Prim</h3>
+
+<p>It operates by building this tree one node at a time, from an arbitrary starting node at each step adding the cheapest possible edge from the tree to another node.<script type="math/tex">O(E+VlogV)</script></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;</span> <span class="nf">primMST</span><span class="o">(</span><span class="n">Graph</span> <span class="n">graph</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">PriorityQueue</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;</span> <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PriorityQueue</span><span class="o">&lt;&gt;((</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="o">.</span><span class="na">weight</span> <span class="o">-</span> <span class="n">b</span><span class="o">.</span><span class="na">weight</span><span class="o">);</span>
+    <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+    <span class="n">Set</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+    <span class="k">for</span> <span class="o">(</span><span class="n">Node</span> <span class="nl">node:</span> <span class="n">graph</span><span class="o">.</span><span class="na">nodes</span><span class="o">.</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// from one node, start build a tree</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">set</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">node</span><span class="o">))</span> <span class="k">continue</span><span class="o">;</span>
+        <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+        <span class="c1">// add edges from the node</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">Edge</span> <span class="nl">edge:</span> <span class="n">node</span><span class="o">.</span><span class="na">edges</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">queue</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="n">edge</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">while</span> <span class="o">(!</span><span class="n">queue</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+            <span class="c1">// in every loop, find the shortest edge to connect to the nodes not in the set </span>
+            <span class="n">Edge</span> <span class="n">edge</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
+            <span class="n">Node</span> <span class="n">toNode</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="na">to</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">set</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">toNode</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">toNode</span><span class="o">);</span>
+                <span class="n">result</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">edge</span><span class="o">);</span>
+                <span class="c1">// add edges from the new added toNode</span>
+                <span class="k">for</span> <span class="o">(</span><span class="n">Edge</span> <span class="nl">nextEdge:</span> <span class="n">toNode</span><span class="o">.</span><span class="na">edges</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">queue</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="n">nextEdge</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="dijkstra">Dijkstra</h2>
+
+<p>find the shortest paths between nodes in a connected, directed graph with non-negative edges</p>
+
+<p>From a head node, compute the distances from the head to other nodes.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="nf">dijkstra</span><span class="o">(</span><span class="n">Node</span> <span class="n">head</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Node</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">distanceMap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span> <span class="c1">// record distances from head to other nodes</span>
+    <span class="c1">// head to head: defalut 0</span>
+    <span class="n">distanceMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">head</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+    <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">selectedNodes</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+
+    <span class="c1">// find the closest and unseleted node</span>
+    <span class="n">Node</span> <span class="n">minNode</span> <span class="o">=</span> <span class="n">getMinDistanceAndUnselectedNode</span><span class="o">(</span><span class="n">distanceMap</span><span class="o">,</span> <span class="n">selectedNodes</span><span class="o">);</span>
+    <span class="k">while</span> <span class="o">(</span><span class="n">minNode</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// record distance from head to minNode</span>
+        <span class="kt">int</span> <span class="n">distance</span> <span class="o">=</span> <span class="n">distanceMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">minNode</span><span class="o">);</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">Edge</span> <span class="nl">edge:</span> <span class="n">minNode</span><span class="o">.</span><span class="na">edges</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// from minNode, update every adjacent nodes' distance</span>
+            <span class="n">Node</span> <span class="n">toNode</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="na">to</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">distanceMap</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">toNode</span><span class="o">))</span> <span class="n">distanceMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">toNode</span><span class="o">,</span> <span class="n">distance</span> <span class="o">+</span> <span class="n">edge</span><span class="o">.</span><span class="na">weight</span><span class="o">);</span>
+            <span class="n">distanceMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">toNode</span><span class="o">,</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">distanceMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">edge</span><span class="o">.</span><span class="na">to</span><span class="o">),</span> <span class="n">distance</span> <span class="o">+</span> <span class="n">edge</span><span class="o">.</span><span class="na">weight</span><span class="o">));</span>
+        <span class="o">}</span>
+        <span class="n">selectedNodes</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">minNode</span><span class="o">);</span>
+        <span class="c1">// find the closest and unseleted node</span>
+        <span class="n">minNode</span> <span class="o">=</span> <span class="n">getMinDistanceAndUnselectedNode</span><span class="o">(</span><span class="n">distanceMap</span><span class="o">,</span> <span class="n">selectedNodes</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">distanceMap</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="n">Node</span> <span class="nf">getMinDistanceAndUnselectedNode</span><span class="o">(</span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">distanceMap</span><span class="o">,</span> <span class="n">HashSet</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span> <span class="n">selectedNodes</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Node</span> <span class="n">minNode</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">minDistance</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">;</span>
+    <span class="k">for</span> <span class="o">(</span><span class="n">Entry</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="nl">entry:</span> <span class="n">distanceMap</span><span class="o">.</span><span class="na">entrySet</span><span class="o">())</span> <span class="o">{</span>
+        <span class="c1">// find the node which its distance is the shortest and not in selectedNodes</span>
+        <span class="n">Node</span> <span class="n">node</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+        <span class="kt">int</span> <span class="n">distance</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">selectedNodes</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">node</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">distance</span> <span class="o">&lt;</span> <span class="n">minDistance</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">minNode</span> <span class="o">=</span> <span class="n">node</span><span class="o">;</span>
+            <span class="n">minDistance</span> <span class="o">=</span> <span class="n">distance</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>The distance update and findMin operation can be optimized by using a customized min heap</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">NodeRecord</span> <span class="o">{</span> <span class="c1">// node with its distance from a head node to it</span>
+    <span class="n">Node</span> <span class="n">node</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">distance</span><span class="o">;</span>
+    <span class="n">NodeRecord</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">,</span> <span class="kt">int</span> <span class="n">distance</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">distance</span> <span class="o">=</span> <span class="n">distance</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">NodeHeap</span> <span class="o">{</span>
+    <span class="n">Node</span><span class="o">[]</span> <span class="n">nodes</span><span class="o">;</span> <span class="c1">// all nodes in the graph</span>
+    <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">heapIndexMap</span><span class="o">;</span> <span class="c1">// (node, its index in the array)</span>
+    <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">distanceMap</span><span class="o">;</span> <span class="c1">//  (node, its distance from a head node to it)</span>
+    <span class="kt">int</span> <span class="n">size</span><span class="o">;</span> <span class="c1">// heap size</span>
+
+    <span class="n">NodeHeap</span><span class="o">(</span><span class="kt">int</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Node</span><span class="o">[</span><span class="n">size</span><span class="o">];</span>
+        <span class="n">heapIndexMap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="n">distanceMap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">size</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kt">boolean</span> <span class="nf">isEmpty</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kt">void</span> <span class="nf">addOrUpdateOrIgnore</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">,</span> <span class="kt">int</span> <span class="n">distance</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// add a node || update a node's distance and heapify || ignore</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">inHeap</span><span class="o">(</span><span class="n">node</span><span class="o">))</span> <span class="o">{</span> <span class="c1">// update</span>
+            <span class="c1">// if the node is in the heap, update its distance and heapify</span>
+            <span class="c1">// because the update operation will only reduce the distance, so only swim() happens</span>
+            <span class="n">distanceMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">distanceMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">node</span><span class="o">),</span> <span class="n">distance</span><span class="o">));</span>
+            <span class="n">swim</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">heapIndexMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">node</span><span class="o">));</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">isEntered</span><span class="o">(</span><span class="n">node</span><span class="o">))</span> <span class="o">{</span> <span class="c1">// add</span>
+            <span class="c1">// add a node into the heap and heapify</span>
+            <span class="n">nodes</span><span class="o">[</span><span class="n">size</span><span class="o">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">;</span>
+            <span class="n">heapIndexMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">size</span><span class="o">);</span>
+            <span class="n">distanceMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">distance</span><span class="o">);</span>
+            <span class="n">swim</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">size</span><span class="o">++);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kt">void</span> <span class="nf">swim</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">,</span> <span class="kt">int</span> <span class="n">index</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">distanceMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">nodes</span><span class="o">[</span><span class="n">index</span><span class="o">])</span> <span class="o">&lt;</span> <span class="n">distanceMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">nodes</span><span class="o">[(</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span> <span class="o">/</span> <span class="mi">2</span><span class="o">]))</span> <span class="o">{</span>
+            <span class="n">swap</span><span class="o">(</span><span class="n">index</span><span class="o">,</span> <span class="o">(</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span> <span class="o">/</span> <span class="mi">2</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kt">void</span> <span class="nf">sink</span><span class="o">(</span><span class="kt">int</span> <span class="n">index</span><span class="o">,</span> <span class="kt">int</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">left</span> <span class="o">=</span> <span class="n">index</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">left</span> <span class="o">&lt;</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// make sure nodes[left].distance &lt; nodes[left + 1].distance</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">left</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">size</span> <span class="o">&amp;&amp;</span> <span class="n">distanceMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">nodes</span><span class="o">[</span><span class="n">left</span> <span class="o">+</span> <span class="mi">1</span><span class="o">])</span> <span class="o">&lt;</span> <span class="n">distanceMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">nodes</span><span class="o">[</span><span class="n">left</span><span class="o">]))</span> <span class="o">{</span>
+                <span class="n">swap</span><span class="o">(</span><span class="n">left</span><span class="o">,</span> <span class="n">left</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="c1">// don't need to swap again</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">distanceMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">index</span><span class="o">)</span> <span class="o">&lt;=</span> <span class="n">distanceMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">left</span><span class="o">))</span> <span class="k">break</span><span class="o">;</span>
+            <span class="n">swap</span><span class="o">(</span><span class="n">left</span><span class="o">,</span> <span class="n">index</span><span class="o">);</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">left</span><span class="o">;</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">index</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="n">NodeRecord</span> <span class="nf">poll</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c1">// poll a node with the shortest distance</span>
+        <span class="n">NodeRecord</span> <span class="n">nodeRecord</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NodeRecord</span><span class="o">(</span><span class="n">nodes</span><span class="o">[</span><span class="mi">0</span><span class="o">],</span> <span class="n">distanceMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">nodes</span><span class="o">[</span><span class="mi">0</span><span class="o">]));</span>
+        <span class="n">swap</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
+        <span class="n">heapIndexMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">nodes</span><span class="o">[</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="o">],</span> <span class="o">-</span><span class="mi">1</span><span class="o">);</span>
+        <span class="n">distanceMap</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">nodes</span><span class="o">[</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="o">]);</span>
+        <span class="n">nodes</span><span class="o">[</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="o">]</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="n">sink</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="o">--</span><span class="n">size</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">nodeRecord</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kt">boolean</span> <span class="nf">isEntered</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">heapIndexMap</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kt">boolean</span> <span class="nf">inHeap</span><span class="o">(</span><span class="n">Node</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">isEntered</span><span class="o">(</span><span class="n">node</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">heapIndexMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">node</span><span class="o">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kt">void</span> <span class="nf">swap</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">,</span> <span class="kt">int</span> <span class="n">j</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">heapIndexMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">nodes</span><span class="o">[</span><span class="n">i</span><span class="o">],</span> <span class="n">j</span><span class="o">);</span>
+        <span class="n">heapIndexMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">nodes</span><span class="o">[</span><span class="n">j</span><span class="o">],</span> <span class="n">i</span><span class="o">);</span>
+        <span class="n">Node</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+        <span class="n">nodes</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">[</span><span class="n">j</span><span class="o">];</span>
+        <span class="n">nodes</span><span class="o">[</span><span class="n">j</span><span class="o">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="nf">dijkstra</span><span class="o">(</span><span class="n">Node</span> <span class="n">head</span><span class="o">,</span> <span class="kt">int</span> <span class="n">size</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">NodeHeap</span> <span class="n">nodeHeap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NodeHeap</span><span class="o">(</span><span class="n">size</span><span class="o">);</span>
+    <span class="n">nodeHeap</span><span class="o">.</span><span class="na">addOrUpdateOrIgnore</span><span class="o">(</span><span class="n">head</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
+    <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+    <span class="k">while</span> <span class="o">(!</span><span class="n">nodeHeap</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">NodeRecord</span> <span class="n">record</span> <span class="o">=</span> <span class="n">nodeHeap</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
+        <span class="n">Node</span> <span class="n">cur</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="na">node</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">distance</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="na">dsitance</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">Edge</span> <span class="nl">edge:</span> <span class="n">cur</span><span class="o">.</span><span class="na">edges</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">nodeHeap</span><span class="o">.</span><span class="na">addOrUpdateOrIgnore</span><span class="o">(</span><span class="n">edge</span><span class="o">.</span><span class="na">to</span><span class="o">,</span> <span class="n">edge</span><span class="o">.</span><span class="na">weight</span> <span class="o">+</span> <span class="n">distance</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">result</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">cur</span><span class="o">,</span> <span class="n">distance</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>More about <a href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm">Dijkstra</a></p>
+
+<h2 id="practice">Practice</h2>
+
+<h3 id="mincosttotakeroadsfacebook">MinCostToTakeRoads(Facebook)</h3>
+
+<blockquote>
+  <p>There is a graph of roads and cities. Every city of the graph is A-type or B-type with a cost value. If we take a city, the neighbored roads will be taken. If the neighbored cities are the same type as the taken one, these cities will be taken too. Compute the minimum cost to take all roads.</p>
+
+  <p>eg. If a city A(4) connects 3 cities B(1), the min cost is 3 (take all B’s roads). If A’s cost become 2, the result is 2 (take A).</p>
+
+  <p>If A1 is connected with A2 and A1 is taken, the road connected to A1 and A2 will be taken including A1A2.</p>
+</blockquote>
+
+<p>Greedy solution. The cost-performance of a city is (the cost of the city / the current connected untaken roads). Use this to build a min heap and compute the total cost</p>
+
+<p>Refer to Knapsack in <a href="RecursionDP.md">RecursionDP.md</a></p>
+
+<h3 id="longest-increasing-path-in-a-matrix"><a href="https://leetcode.com/problems/longest-increasing-path-in-a-matrix/description/">Longest Increasing Path in a Matrix</a></h3>
+
+<blockquote>
+  <p>Given an integer matrix, find the length of the longest increasing path.</p>
+
+  <p>From each cell, you can either move to four directions: left, right, up or down. You may NOT move diagonally or move outside of the boundary (i.e. wrap-around is not allowed).</p>
+</blockquote>
+
+<p>DFS solution:</p>
+
+<ol>
+  <li>From every node, use DFS to find an increasing path</li>
+  <li>Use cache to memorize previous DFS results</li>
+</ol>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span><span class="o">[][]</span> <span class="n">direction</span> <span class="o">=</span> <span class="o">{</span> <span class="o">{-</span><span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">},</span> <span class="o">{</span><span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">},</span> <span class="o">{</span><span class="mi">0</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">},</span> <span class="o">{</span><span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">}</span> <span class="o">};</span>
+<span class="kd">public</span> <span class="kt">int</span> <span class="nf">longestIncreasingPath</span><span class="o">(</span><span class="kt">int</span><span class="o">[][]</span> <span class="n">matrix</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">matrix</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">matrix</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">matrix</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="na">length</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+    <span class="kt">int</span><span class="o">[][]</span> <span class="n">cache</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">matrix</span><span class="o">.</span><span class="na">length</span><span class="o">][</span><span class="n">matrix</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="na">length</span><span class="o">];</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">matrix</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">matrix</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="na">length</span><span class="o">;</span> <span class="n">j</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">res</span><span class="o">,</span> <span class="n">dfs</span><span class="o">(</span><span class="n">matrix</span><span class="o">,</span> <span class="n">i</span><span class="o">,</span> <span class="n">j</span><span class="o">,</span> <span class="n">cache</span><span class="o">));</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="kd">private</span> <span class="kt">int</span> <span class="nf">dfs</span><span class="o">(</span><span class="kt">int</span><span class="o">[][]</span> <span class="n">matrix</span><span class="o">,</span> <span class="kt">int</span> <span class="n">i</span><span class="o">,</span> <span class="kt">int</span> <span class="n">j</span><span class="o">,</span> <span class="kt">int</span><span class="o">[][]</span> <span class="n">cache</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="n">isValid</span><span class="o">(</span><span class="n">matrix</span><span class="o">,</span> <span class="n">i</span><span class="o">,</span> <span class="n">j</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">cache</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">cache</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">];</span>
+    <span class="o">}</span>
+
+    <span class="n">cache</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="nl">d:</span> <span class="n">direction</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">d</span><span class="o">[</span><span class="mi">0</span><span class="o">];</span>
+        <span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="n">d</span><span class="o">[</span><span class="mi">1</span><span class="o">];</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">isValid</span><span class="o">(</span><span class="n">matrix</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">matrix</span><span class="o">[</span><span class="n">x</span><span class="o">][</span><span class="n">y</span><span class="o">]</span> <span class="o">&gt;</span> <span class="n">matrix</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">])</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="n">dfs</span><span class="o">(</span><span class="n">matrix</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="n">cache</span><span class="o">)</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+            <span class="n">cache</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span> <span class="o">=</span> <span class="n">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="n">cache</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">],</span> <span class="n">count</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">cache</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">];</span>
+<span class="o">}</span>
+
+<span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">isValid</span><span class="o">(</span><span class="kt">int</span><span class="o">[][]</span> <span class="n">matrix</span><span class="o">,</span> <span class="kt">int</span> <span class="n">x</span><span class="o">,</span> <span class="kt">int</span> <span class="n">y</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">matrix</span><span class="o">.</span><span class="na">length</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">matrix</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="na">length</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+
+
+      <footer class="site-footer">
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </main>
+
+    
+  </body>
+</html>
